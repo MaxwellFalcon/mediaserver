@@ -1,0 +1,132 @@
+version: '3.6'
+
+services:
+  plex:
+    container_name: plex
+    image: lscr.io/linuxserver/plex:version-1.32.1.6999-91e1e2e2c
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: ${TZ_IDENTIFIER}
+      VERSION: docker
+      PATH_TO_DOCKER_DIRECTORY: ${PATH_TO_DOCKER_DIRECTORY}
+      PATH_TO_MOVIES: ${PATH_TO_MOVIES}
+      PATH_TO_TV_SHOWS: ${PATH_TO_TV_SHOWS}
+    network_mode: host
+    volumes:
+      - ${PATH_TO_DOCKER_DIRECTORY}/plex/config:/config
+      - ${PATH_TO_MOVIES}:/movies
+      - ${PATH_TO_TV_SHOWS}:/tv
+    restart: unless-stopped
+  requestrr:
+    container_name: requestrr
+    image: darkalfx/requestrr:latest
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: ${TZ_IDENTIFIER}
+      PATH_TO_DOCKER_DIRECTORY: ${PATH_TO_DOCKER_DIRECTORY}
+    volumes:
+      - ${PATH_TO_DOCKER_DIRECTORY}/requestrr:/root/config
+    ports:
+      - 4545:4545
+    restart: unless-stopped
+  bazarr:
+    container_name: bazarr
+    image: lscr.io/linuxserver/bazarr:latest
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: ${TZ_IDENTIFIER}
+      PATH_TO_DOCKER_DIRECTORY: ${PATH_TO_DOCKER_DIRECTORY}
+      PATH_TO_MOVIES: ${PATH_TO_MOVIES}
+      PATH_TO_TV_SHOWS: ${PATH_TO_TV_SHOWS}
+    volumes:
+      - ${PATH_TO_DOCKER_DIRECTORY}/bazarr/config:/config
+      - ${PATH_TO_MOVIES}:/movies
+      - ${PATH_TO_TV_SHOWS}:/tv
+    ports:
+      - 6767:6767
+    restart: unless-stopped
+  gluetun:
+    container_name: gluetun
+    image: qmcgaw/gluetun
+    network_mode: bridge
+    ports:
+      - 6881:6881/tcp
+      - 6881:6881/udp
+      - 8080:8080
+      - 9696:9696
+    cap_add:
+      - NET_ADMIN
+    environment:
+      VPN_SERVICE_PROVIDER: ${VPN_SERVICE_PROVIDER}
+      OPENVPN_USER: ${OPENVPN_USER}
+      OPENVPN_PASSWORD: ${OPENVPN_PASSWORD}
+      SERVER_REGIONS: ${SERVER_REGIONS}
+  prowlarr:
+    container_name: prowlarr
+    image: lscr.io/linuxserver/prowlarr:latest
+    depends_on:
+      - gluetun
+    network_mode: service:gluetun
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: ${TZ_IDENTIFIER}
+      PATH_TO_DOCKER_DIRECTORY: ${PATH_TO_DOCKER_DIRECTORY}
+    volumes:
+      - ${PATH_TO_DOCKER_DIRECTORY}/prowlarr/config:/config
+    restart: unless-stopped
+  qbittorrent:
+    container_name: qbittorrent
+    image: lscr.io/linuxserver/qbittorrent:latest
+    depends_on:
+      - gluetun
+    network_mode: service:gluetun
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: ${TZ_IDENTIFIER}
+      WEBUI_PORT: 8080
+      PATH_TO_DOCKER_DIRECTORY: ${PATH_TO_DOCKER_DIRECTORY}
+      PATH_TO_MOVIES: ${PATH_TO_MOVIES}
+      PATH_TO_TV_SHOWS: ${PATH_TO_TV_SHOWS}
+    volumes:
+      - ${PATH_TO_DOCKER_DIRECTORY}/qbittorrent/config:/config
+      - ${PATH_TO_DOCKER_DIRECTORY}/qbittorrent/downloads:/downloads
+      - ${PATH_TO_MOVIES}:/movies
+      - ${PATH_TO_TV_SHOWS}:/tv
+    restart: unless-stopped
+  sonarr:
+    container_name: sonarr
+    image: lscr.io/linuxserver/sonarr:latest
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: ${TZ_IDENTIFIER}
+      PATH_TO_DOCKER_DIRECTORY: ${PATH_TO_DOCKER_DIRECTORY}
+      PATH_TO_TV_SHOWS: ${PATH_TO_TV_SHOWS}
+    volumes:
+      - ${PATH_TO_DOCKER_DIRECTORY}/sonarr/config:/config
+      - ${PATH_TO_DOCKER_DIRECTORY}/qbittorrent/downloads:/downloads
+      - ${PATH_TO_TV_SHOWS}:/tv
+    ports:
+      - 8989:8989
+    restart: unless-stopped
+  radarr:
+    container_name: radarr
+    image: lscr.io/linuxserver/radarr:latest
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: ${TZ_IDENTIFIER}
+      PATH_TO_DOCKER_DIRECTORY: ${PATH_TO_DOCKER_DIRECTORY}
+      PATH_TO_MOVIES: ${PATH_TO_MOVIES}
+    volumes:
+      - ${PATH_TO_DOCKER_DIRECTORY}/qbittorrent/downloads:/downloads
+      - ${PATH_TO_MOVIES}:/movies
+      - ${PATH_TO_DOCKER_DIRECTORY}/radarr/config:/config
+    ports:
+      - 7878:7878
+    restart: unless-stopped
