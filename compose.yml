@@ -1,17 +1,14 @@
-version: '3.6'
+version: "3.6"
 
 services:
   plex:
     container_name: plex
-    image: lscr.io/linuxserver/plex:version-1.32.1.6999-91e1e2e2c
+    image: lscr.io/linuxserver/plex:latest
     environment:
       PUID: 1000
       PGID: 1000
       TZ: ${TZ_IDENTIFIER}
       VERSION: docker
-      PATH_TO_DOCKER_DIRECTORY: ${PATH_TO_DOCKER_DIRECTORY}
-      PATH_TO_MOVIES: ${PATH_TO_MOVIES}
-      PATH_TO_TV_SHOWS: ${PATH_TO_TV_SHOWS}
     network_mode: host
     volumes:
       - ${PATH_TO_DOCKER_DIRECTORY}/plex/config:/config
@@ -25,7 +22,6 @@ services:
       PUID: 1000
       PGID: 1000
       TZ: ${TZ_IDENTIFIER}
-      PATH_TO_DOCKER_DIRECTORY: ${PATH_TO_DOCKER_DIRECTORY}
     volumes:
       - ${PATH_TO_DOCKER_DIRECTORY}/requestrr:/root/config
     ports:
@@ -38,9 +34,6 @@ services:
       PUID: 1000
       PGID: 1000
       TZ: ${TZ_IDENTIFIER}
-      PATH_TO_DOCKER_DIRECTORY: ${PATH_TO_DOCKER_DIRECTORY}
-      PATH_TO_MOVIES: ${PATH_TO_MOVIES}
-      PATH_TO_TV_SHOWS: ${PATH_TO_TV_SHOWS}
     volumes:
       - ${PATH_TO_DOCKER_DIRECTORY}/bazarr/config:/config
       - ${PATH_TO_MOVIES}:/movies
@@ -74,7 +67,6 @@ services:
       PUID: 1000
       PGID: 1000
       TZ: ${TZ_IDENTIFIER}
-      PATH_TO_DOCKER_DIRECTORY: ${PATH_TO_DOCKER_DIRECTORY}
     volumes:
       - ${PATH_TO_DOCKER_DIRECTORY}/prowlarr/config:/config
     restart: unless-stopped
@@ -89,9 +81,6 @@ services:
       PGID: 1000
       TZ: ${TZ_IDENTIFIER}
       WEBUI_PORT: 8080
-      PATH_TO_DOCKER_DIRECTORY: ${PATH_TO_DOCKER_DIRECTORY}
-      PATH_TO_MOVIES: ${PATH_TO_MOVIES}
-      PATH_TO_TV_SHOWS: ${PATH_TO_TV_SHOWS}
     volumes:
       - ${PATH_TO_DOCKER_DIRECTORY}/qbittorrent/config:/config
       - ${PATH_TO_DOCKER_DIRECTORY}/qbittorrent/downloads:/downloads
@@ -105,8 +94,6 @@ services:
       PUID: 1000
       PGID: 1000
       TZ: ${TZ_IDENTIFIER}
-      PATH_TO_DOCKER_DIRECTORY: ${PATH_TO_DOCKER_DIRECTORY}
-      PATH_TO_TV_SHOWS: ${PATH_TO_TV_SHOWS}
     volumes:
       - ${PATH_TO_DOCKER_DIRECTORY}/sonarr/config:/config
       - ${PATH_TO_DOCKER_DIRECTORY}/qbittorrent/downloads:/downloads
@@ -121,12 +108,22 @@ services:
       PUID: 1000
       PGID: 1000
       TZ: ${TZ_IDENTIFIER}
-      PATH_TO_DOCKER_DIRECTORY: ${PATH_TO_DOCKER_DIRECTORY}
-      PATH_TO_MOVIES: ${PATH_TO_MOVIES}
     volumes:
       - ${PATH_TO_DOCKER_DIRECTORY}/qbittorrent/downloads:/downloads
       - ${PATH_TO_MOVIES}:/movies
       - ${PATH_TO_DOCKER_DIRECTORY}/radarr/config:/config
     ports:
       - 7878:7878
+    restart: unless-stopped
+  tautulli:
+    image: lscr.io/linuxserver/tautulli:latest
+    container_name: tautulli
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+    volumes:
+      - ${PATH_TO_DOCKER_DIRECTORY}/tautulli/config:/config
+    ports:
+      - 8181:8181
     restart: unless-stopped
