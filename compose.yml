@@ -1,12 +1,12 @@
-version: "3.6"
+version: '3.6'
 
 services:
   plex:
     container_name: plex
     image: lscr.io/linuxserver/plex:latest
     environment:
-      PUID: 1000
-      PGID: 1000
+      PUID: ${PUID}
+      PGID: ${PGID}
       TZ: ${TZ_IDENTIFIER}
       VERSION: docker
     network_mode: host
@@ -19,8 +19,8 @@ services:
     container_name: requestrr
     image: darkalfx/requestrr:latest
     environment:
-      PUID: 1000
-      PGID: 1000
+      PUID: ${PUID}
+      PGID: ${PGID}
       TZ: ${TZ_IDENTIFIER}
     volumes:
       - ${PATH_TO_DOCKER_DIRECTORY}/requestrr:/root/config
@@ -31,8 +31,8 @@ services:
     container_name: bazarr
     image: lscr.io/linuxserver/bazarr:latest
     environment:
-      PUID: 1000
-      PGID: 1000
+      PUID: ${PUID}
+      PGID: ${PGID}
       TZ: ${TZ_IDENTIFIER}
     volumes:
       - ${PATH_TO_DOCKER_DIRECTORY}/bazarr/config:/config
@@ -64,8 +64,8 @@ services:
       - gluetun
     network_mode: service:gluetun
     environment:
-      PUID: 1000
-      PGID: 1000
+      PUID: ${PUID}
+      PGID: ${PGID}
       TZ: ${TZ_IDENTIFIER}
     volumes:
       - ${PATH_TO_DOCKER_DIRECTORY}/prowlarr/config:/config
@@ -77,8 +77,8 @@ services:
       - gluetun
     network_mode: service:gluetun
     environment:
-      PUID: 1000
-      PGID: 1000
+      PUID: ${PUID}
+      PGID: ${PGID}
       TZ: ${TZ_IDENTIFIER}
       WEBUI_PORT: 8080
     volumes:
@@ -91,8 +91,8 @@ services:
     container_name: sonarr
     image: lscr.io/linuxserver/sonarr:latest
     environment:
-      PUID: 1000
-      PGID: 1000
+      PUID: ${PUID}
+      PGID: ${PGID}
       TZ: ${TZ_IDENTIFIER}
     volumes:
       - ${PATH_TO_DOCKER_DIRECTORY}/sonarr/config:/config
@@ -105,8 +105,8 @@ services:
     container_name: radarr
     image: lscr.io/linuxserver/radarr:latest
     environment:
-      PUID: 1000
-      PGID: 1000
+      PUID: ${PUID}
+      PGID: ${PGID}
       TZ: ${TZ_IDENTIFIER}
     volumes:
       - ${PATH_TO_DOCKER_DIRECTORY}/qbittorrent/downloads:/downloads
@@ -119,9 +119,9 @@ services:
     image: lscr.io/linuxserver/tautulli:latest
     container_name: tautulli
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/New_York
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: America/New_York
     volumes:
       - ${PATH_TO_DOCKER_DIRECTORY}/tautulli/config:/config
     ports:
