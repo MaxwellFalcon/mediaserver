@@ -66,6 +66,8 @@ services:
       TZ: ${TZ_IDENTIFIER}
     volumes:
       - ${PATH_TO_DOCKER_DIRECTORY}/prowlarr/config:/config
+    ports:
+      - 9696:9696
     restart: unless-stopped
   qbittorrent:
     container_name: qbittorrent
