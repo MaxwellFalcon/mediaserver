@@ -1,4 +1,4 @@
-version: '3.6'
+version: "3.6"
 
 services:
   plex:
@@ -127,4 +127,16 @@ services:
       - ${PATH_TO_DOCKER_DIRECTORY}/tautulli/config:/config
     ports:
       - 8181:8181
+    restart: unless-stopped
+  overseerr:
+    image: lscr.io/linuxserver/overseerr:latest
+    container_name: overseerr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - ${PATH_TO_DOCKER_DIRECTORY}/overseerr/config:/config
+    ports:
+      - 5055:5055
     restart: unless-stopped
