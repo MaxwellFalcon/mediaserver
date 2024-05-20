@@ -140,3 +140,18 @@ services:
     ports:
       - 5055:5055
     restart: unless-stopped
+  nginx-proxy-manager:
+    image: jc21/nginx-proxy-manager:latest
+    restart: unless-stopped
+    ports:
+      - 80:80
+      - 81:81
+      - 443:443
+    volumes:
+      - ${PATH_TO_DOCKER_DIRECTORY}/data:/data
+      - ${PATH_TO_DOCKER_DIRECTORY}/letsencrypt:/etc/letsencrypt
+  rtmp:
+    image: tiangolo/nginx-rtmp
+    container_name: rtmp
+    ports:
+      - 1935:1935
