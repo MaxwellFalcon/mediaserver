@@ -43,22 +43,21 @@ services:
     ports:
       - 6767:6767
     restart: unless-stopped
-  gluetun:
-    container_name: gluetun
-    image: qmcgaw/gluetun
-    network_mode: bridge
-    ports:
-      - 6881:6881/tcp
-      - 6881:6881/udp
-      - 8080:8080
-      - 9696:9696
+  vpn:
+    image: ghcr.io/bubuntux/nordvpn
+    container_name: vpn
     cap_add:
-      - NET_ADMIN
-    environment:
-      VPN_SERVICE_PROVIDER: ${VPN_SERVICE_PROVIDER}
-      OPENVPN_USER: ${OPENVPN_USER}
-      OPENVPN_PASSWORD: ${OPENVPN_PASSWORD}
-      SERVER_REGIONS: ${SERVER_REGIONS}
+      - NET_ADMIN # Required
+      - NET_RAW # Required
+    environment: # Review https://github.com/bubuntux/nordvpn#environment-variables
+      TOKEN: ${NORDVPN_TOKEN} # Required
+      CONNECT: United_States
+      TECHNOLOGY: NordLynx
+      # NETWORK:192.168.1.0/24  # So it can be accessed within the local network
+    ports:
+      - 8080:8080
+    sysctls:
+      - net.ipv6.conf.all.disable_ipv6=1 # Recomended if using ipv4 only
   prowlarr:
     container_name: prowlarr
     image: lscr.io/linuxserver/prowlarr:latest
@@ -75,8 +74,8 @@ services:
     container_name: qbittorrent
     image: lscr.io/linuxserver/qbittorrent:latest
     depends_on:
-      - gluetun
-    network_mode: service:gluetun
+      - vpn
+    network_mode: service:vpn
     environment:
       PUID: ${PUID}
       PGID: ${PGID}
