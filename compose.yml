@@ -59,9 +59,6 @@ services:
       OPENVPN_USER: ${OPENVPN_USER}
       OPENVPN_PASSWORD: ${OPENVPN_PASSWORD}
       SERVER_REGIONS: ${SERVER_REGIONS}
-      PUID: ${PUID}
-      PGID: ${PGID}
-      TZ: ${TZ_IDENTIFIER}
   prowlarr:
     container_name: prowlarr
     image: lscr.io/linuxserver/prowlarr:latest
