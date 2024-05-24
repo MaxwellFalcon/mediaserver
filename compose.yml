@@ -100,6 +100,7 @@ services:
       - ${PATH_TO_TV_SHOWS}:/tv
     ports:
       - 8989:8989
+      - 9898:9898
     restart: unless-stopped
   radarr:
     container_name: radarr
