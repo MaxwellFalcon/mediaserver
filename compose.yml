@@ -60,6 +60,7 @@ services:
       - net.ipv6.conf.all.disable_ipv6=1 # Recomended if using ipv4 only
   gluetun:
     image: qmcgaw/gluetun
+    container_name: gluetun
     cap_add:
       - NET_ADMIN
     environment:
