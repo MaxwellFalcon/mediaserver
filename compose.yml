@@ -58,6 +58,16 @@ services:
       - 8080:8080
     sysctls:
       - net.ipv6.conf.all.disable_ipv6=1 # Recomended if using ipv4 only
+  gluetun:
+    image: qmcgaw/gluetun
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - VPN_SERVICE_PROVIDER=nordvpn
+      - VPN_TYPE=openvpn # or wireguard
+      - OPENVPN_USER='maxfalc@gmail.com'
+      - OPENVPN_PASSWORD='Fruit$alad2121777'
+      - SERVER_COUNTRIES=Netherlands
   prowlarr:
     container_name: prowlarr
     image: lscr.io/linuxserver/prowlarr:latest
