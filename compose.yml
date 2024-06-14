@@ -71,7 +71,7 @@ services:
     image: lscr.io/linuxserver/qbittorrent:latest
     depends_on:
       - vpn
-    network_mode: service:vpn
+    network_mode: service:gluetun
     environment:
       PUID: ${PUID}
       PGID: ${PGID}
