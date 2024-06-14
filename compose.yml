@@ -53,7 +53,7 @@ services:
       - VPN_TYPE=openvpn # or wireguard
       - OPENVPN_USER=${OPENVPN_USER}
       - OPENVPN_PASSWORD=${OPENVPN_PASSWORD}
-      - SERVER_COUNTRIES=Netherlands
+      - SERVER_COUNTRIES=${SERVER_REGIONS}
   prowlarr:
     container_name: prowlarr
     image: lscr.io/linuxserver/prowlarr:latest
