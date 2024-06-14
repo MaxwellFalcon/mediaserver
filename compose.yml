@@ -70,7 +70,7 @@ services:
     container_name: qbittorrent
     image: lscr.io/linuxserver/qbittorrent:latest
     depends_on:
-      - vpn
+      - gluetun
     network_mode: service:gluetun
     environment:
       PUID: ${PUID}
