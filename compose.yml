@@ -66,8 +66,8 @@ services:
     environment:
       - VPN_SERVICE_PROVIDER=nordvpn
       - VPN_TYPE=openvpn # or wireguard
-      - OPENVPN_USER='maxfalc@gmail.com'
-      - OPENVPN_PASSWORD='Fruit$alad2121777'
+      - OPENVPN_USER=${OPENVPN_USER}
+      - OPENVPN_PASSWORD=${OPENVPN_PASSWORD}
       - SERVER_COUNTRIES=Netherlands
   prowlarr:
     container_name: prowlarr
