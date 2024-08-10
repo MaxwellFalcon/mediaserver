@@ -1,9 +1,9 @@
 version: "3.6"
-
 services:
   plex:
-    container_name: plex
     image: lscr.io/linuxserver/plex:latest
+    container_name: plex
+    restart: always
     environment:
       PUID: ${PUID}
       PGID: ${PGID}
@@ -16,10 +16,10 @@ services:
       - ${PATH_TO_DOCKER_DIRECTORY}/plex/config:/config
       - ${PATH_TO_MOVIES}:/movies
       - ${PATH_TO_TV_SHOWS}:/tv
-    restart: always
   requestrr:
-    container_name: requestrr
     image: darkalfx/requestrr:latest
+    container_name: requestrr
+    restart: always
     environment:
       PUID: ${PUID}
       PGID: ${PGID}
@@ -28,10 +28,10 @@ services:
       - ${PATH_TO_DOCKER_DIRECTORY}/requestrr:/root/config
     ports:
       - 4545:4545
-    restart: always
   bazarr:
-    container_name: bazarr
     image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr
+    restart: always
     environment:
       PUID: ${PUID}
       PGID: ${PGID}
@@ -42,10 +42,10 @@ services:
       - ${PATH_TO_TV_SHOWS}:/tv
     ports:
       - 6767:6767
-    restart: always
   gluetun:
     image: qmcgaw/gluetun
     container_name: gluetun
+    restart: always
     cap_add:
       - NET_ADMIN
     ports:
@@ -57,8 +57,9 @@ services:
       - OPENVPN_PASSWORD=${OPENVPN_PASSWORD}
       - SERVER_COUNTRIES=${SERVER_REGIONS}
   prowlarr:
-    container_name: prowlarr
     image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    restart: always
     environment:
       PUID: ${PUID}
       PGID: ${PGID}
@@ -67,13 +68,13 @@ services:
       - ${PATH_TO_DOCKER_DIRECTORY}/prowlarr/config:/config
     ports:
       - 9696:9696
-    restart: always
   qbittorrent:
-    container_name: qbittorrent
     image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    restart: always
+    network_mode: service:gluetun
     depends_on:
       - gluetun
-    network_mode: service:gluetun
     environment:
       PUID: ${PUID}
       PGID: ${PGID}
@@ -84,10 +85,10 @@ services:
       - ${PATH_TO_DOCKER_DIRECTORY}/qbittorrent/downloads:/downloads
       - ${PATH_TO_MOVIES}:/movies
       - ${PATH_TO_TV_SHOWS}:/tv
-    restart: always
   sonarr:
-    container_name: sonarr
     image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    restart: always
     environment:
       PUID: ${PUID}
       PGID: ${PGID}
@@ -98,10 +99,10 @@ services:
       - ${PATH_TO_TV_SHOWS}:/tv
     ports:
       - 8989:8989
-    restart: always
   radarr:
-    container_name: radarr
     image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    restart: always
     environment:
       PUID: ${PUID}
       PGID: ${PGID}
@@ -112,10 +113,10 @@ services:
       - ${PATH_TO_DOCKER_DIRECTORY}/radarr/config:/config
     ports:
       - 7878:7878
-    restart: always
   tautulli:
     image: lscr.io/linuxserver/tautulli:latest
     container_name: tautulli
+    restart: always
     environment:
       PUID: ${PUID}
       PGID: ${PGID}
@@ -124,10 +125,10 @@ services:
       - ${PATH_TO_DOCKER_DIRECTORY}/tautulli/config:/config
     ports:
       - 8181:8181
-    restart: always
   overseerr:
     image: lscr.io/linuxserver/overseerr:latest
     container_name: overseerr
+    restart: always
     environment:
       PUID: ${PUID}
       PGID: ${PGID}
@@ -136,7 +137,6 @@ services:
       - ${PATH_TO_DOCKER_DIRECTORY}/overseerr/config:/config
     ports:
       - 5055:5055
-    restart: always
   nginx-proxy-manager:
     image: jc21/nginx-proxy-manager:latest
     container_name: nginx-proxy-manager
@@ -151,5 +151,6 @@ services:
   rtmp:
     image: tiangolo/nginx-rtmp
     container_name: rtmp
+    restart: always
     ports:
       - 1935:1935
