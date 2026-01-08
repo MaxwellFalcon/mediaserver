@@ -85,6 +85,20 @@ services:
       - ${PATH_TO_DOCKER_DIRECTORY}/qbittorrent/downloads:/downloads
       - ${PATH_TO_MOVIES}:/movies
       - ${PATH_TO_TV_SHOWS}:/tv
+  sabnzbd:
+    image: lscr.io/linuxserver/sabnzbd:latest
+    container_name: sabnzbd
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ_IDENTIFIER}
+    volumes:
+      - ${PATH_TO_DOCKER_DIRECTORY}/sabnzbd/config:/config
+      - ${PATH_TO_DOCKER_DIRECTORY}/sabnzbd/incomplete-downloads:/incomplete-downloads #optional
+      - ${PATH_TO_DOCKER_DIRECTORY}/sabnzbd/downloads:/downloads #optional
+    ports:
+      - 8080:8080
+    restart: unless-stopped
   sonarr:
     image: lscr.io/linuxserver/sonarr:latest
     container_name: sonarr
