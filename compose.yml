@@ -94,8 +94,8 @@ services:
       TZ: ${TZ_IDENTIFIER}
     volumes:
       - ${PATH_TO_DOCKER_DIRECTORY}/sabnzbd/config:/config
-      - ${PATH_TO_DOCKER_DIRECTORY}/sabnzbd/incomplete-downloads:/incomplete-downloads #optional
-      - ${PATH_TO_DOCKER_DIRECTORY}/sabnzbd/downloads:/downloads #optional
+      # - ${PATH_TO_DOCKER_DIRECTORY}/sabnzbd/incomplete-downloads:/incomplete-downloads #optional
+      - ${PATH_TO_DOCKER_DIRECTORY}/qbittorrent/downloads:/downloads #optional
     ports:
       - 8082:8080
     restart: unless-stopped
