@@ -74,7 +74,15 @@ services:
     restart: always
     network_mode: service:gluetun
     depends_on:
-      - gluetun
+      gluetun:
+        condition: service_healthy
+    healthcheck:
+      test: ping 1.1.1.1 -nqc 1 > /dev/null 2>&1 || exit 1
+      interval: 60s
+      retries: 5
+      start_period: 20s
+      timeout: 10s
+
     environment:
       PUID: ${PUID}
       PGID: ${PGID}
@@ -94,7 +102,9 @@ services:
       TZ: ${TZ_IDENTIFIER}
     volumes:
       - ${PATH_TO_DOCKER_DIRECTORY}/sabnzbd/config:/config
-      # - ${PATH_TO_DOCKER_DIRECTORY}/sabnzbd/incomplete-downloads:/incomplete-downloads #optional
+      - ${PATH_TO_MOVIES}:/movies
+      - ${PATH_TO_TV_SHOWS}:/tv
+      # # - ${PATH_TO_DOCKER_DIRECTORY}/sabnzbd/incomplete-downloads:/incomplete-downloads #optional
       # - ${PATH_TO_DOCKER_DIRECTORY}/qbittorrent/downloads:/downloads #optional
     ports:
       - 8082:8080
@@ -141,32 +151,47 @@ services:
       - ${PATH_TO_DOCKER_DIRECTORY}/tautulli/config:/config
     ports:
       - 8181:8181
-  overseerr:
-    image: lscr.io/linuxserver/overseerr:latest
-    container_name: overseerr
-    restart: always
+  seerr:
+    image: ghcr.io/seerr-team/seerr:latest
+    init: true
+    container_name: seerr
     environment:
-      PUID: ${PUID}
-      PGID: ${PGID}
-      TZ: ${TZ_IDENTIFIER}
-    volumes:
-      - ${PATH_TO_DOCKER_DIRECTORY}/overseerr/config:/config
+      - LOG_LEVEL=debug
+      - TZ=${TZ_IDENTIFIER}
+      - PORT=5055 #optional
     ports:
       - 5055:5055
-  nginx-proxy-manager:
-    image: jc21/nginx-proxy-manager:latest
-    container_name: nginx-proxy-manager
-    restart: always
-    ports:
-      - 80:80
-      - 81:81
-      - 443:443
     volumes:
-      - ${PATH_TO_DOCKER_DIRECTORY}/data:/data
-      - ${PATH_TO_DOCKER_DIRECTORY}/letsencrypt:/etc/letsencrypt
-  rtmp:
-    image: tiangolo/nginx-rtmp
-    container_name: rtmp
-    restart: always
+      - ${PATH_TO_DOCKER_DIRECTORY}/seerr/config:/app/config
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:5055/api/v1/status || exit 1
+      start_period: 20s
+      timeout: 3s
+      interval: 15s
+      retries: 3
+    restart: unless-stopped
+  flaresolverr:
+    # DockerHub mirror flaresolverr/flaresolverr:latest
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    environment:
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      LOG_FILE: ${LOG_FILE:-none}
+      LOG_HTML: ${LOG_HTML:-false}
+      CAPTCHA_SOLVER: ${CAPTCHA_SOLVER:-none}
+      TZ: ${TZ_IDENTIFIER}
     ports:
-      - 1935:1935
+      - 8191:8191
+    volumes:
+      - ${PATH_TO_DOCKER_DIRECTORY}/flaresolver:/config
+    restart: unless-stopped
+  profilarr:
+    image: santiagosayshey/profilarr:latest # or :beta
+    container_name: profilarr
+    ports:
+      - 6868:6868
+    volumes:
+      - ${PATH_TO_DOCKER_DIRECTORY}/profilarr:/config
+    environment:
+      - TZ=${TZ_IDENTIFIER} # Set your timezone
+    restart: unless-stopped
