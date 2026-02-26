@@ -10,8 +10,8 @@ services:
       TZ: ${TZ_IDENTIFIER}
       VERSION: docker
     network_mode: host
-    # devices:
-    #   - /dev/dri:/dev/dri
+    devices:
+      - /dev/dri:/dev/dri
     volumes:
       - ${PATH_TO_DOCKER_DIRECTORY}/plex/config:/config
       - ${PATH_TO_MOVIES}:/movies
