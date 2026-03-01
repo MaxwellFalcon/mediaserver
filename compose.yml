@@ -14,8 +14,8 @@ services:
       - /dev/dri:/dev/dri
     volumes:
       - ${PATH_TO_DOCKER_DIRECTORY}/plex/config:/config
-      - ${PATH_TO_MOVIES}:/movies
-      - ${PATH_TO_TV_SHOWS}:/tv
+      - ${PATH_TO_REMOTE_STORAGE}/media/movies:/movies
+      - ${PATH_TO_REMOTE_STORAGE}/media/tv:/tv
   requestrr:
     image: darkalfx/requestrr:latest
     container_name: requestrr
@@ -38,8 +38,7 @@ services:
       TZ: ${TZ_IDENTIFIER}
     volumes:
       - ${PATH_TO_DOCKER_DIRECTORY}/bazarr/config:/config
-      - ${PATH_TO_MOVIES}:/movies
-      - ${PATH_TO_TV_SHOWS}:/tv
+      - ${PATH_TO_REMOTE_STORAGE}/media:/media
     ports:
       - 6767:6767
   gluetun:
@@ -91,9 +90,7 @@ services:
       WEBUI_PORT: 8080
     volumes:
       - ${PATH_TO_DOCKER_DIRECTORY}/qbittorrent/config:/config
-      - ${PATH_TO_DOCKER_DIRECTORY}/qbittorrent/downloads:/downloads
-      - ${PATH_TO_MOVIES}:/movies
-      - ${PATH_TO_TV_SHOWS}:/tv
+      - ${PATH_TO_REMOTE_STORAGE}/torrents:/data/torrents
   sabnzbd:
     image: lscr.io/linuxserver/sabnzbd:latest
     container_name: sabnzbd
@@ -103,9 +100,8 @@ services:
       TZ: ${TZ_IDENTIFIER}
     volumes:
       - ${PATH_TO_DOCKER_DIRECTORY}/sabnzbd/config:/config
-      - ${PATH_TO_MOVIES}:/movies
-      - ${PATH_TO_TV_SHOWS}:/tv
-      # # - ${PATH_TO_DOCKER_DIRECTORY}/sabnzbd/incomplete-downloads:/incomplete-downloads #optional
+      - ${PATH_TO_REMOTE_STORAGE}/usenet:/data/usenet
+      # # - ${PATH_TO_DOCKER_DIRECTORY}/sabnzbd/incom plete-downloads:/incomplete-downloads #optional
       # - ${PATH_TO_DOCKER_DIRECTORY}/qbittorrent/downloads:/downloads #optional
     ports:
       - 8082:8080
@@ -120,9 +116,7 @@ services:
       TZ: ${TZ_IDENTIFIER}
     volumes:
       - ${PATH_TO_DOCKER_DIRECTORY}/sonarr/config:/config
-      - ${PATH_TO_DOCKER_DIRECTORY}/qbittorrent/downloads:/downloads
-      - ${PATH_TO_DOCKER_DIRECTORY}/sabnzbd/config/Downloads/complete:/config/Downloads/complete
-      - ${PATH_TO_TV_SHOWS}:/tv
+      - ${PATH_TO_REMOTE_STORAGE}:/data
     ports:
       - 8989:8989
   radarr:
@@ -134,10 +128,8 @@ services:
       PGID: ${PGID}
       TZ: ${TZ_IDENTIFIER}
     volumes:
-      - ${PATH_TO_DOCKER_DIRECTORY}/qbittorrent/downloads:/downloads
-      - ${PATH_TO_DOCKER_DIRECTORY}/sabnzbd/config/Downloads/complete:/config/Downloads/complete
-      - ${PATH_TO_MOVIES}:/movies
       - ${PATH_TO_DOCKER_DIRECTORY}/radarr/config:/config
+      - ${PATH_TO_REMOTE_STORAGE}:/data
     ports:
       - 7878:7878
   tautulli:
